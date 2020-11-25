@@ -1,4 +1,4 @@
-# twittermoney
+# twittermoney - 10/10
 Analyzing Tweets and the cross section of stock returns
 
 (a) Register with twitter and obtain an account.
@@ -17,4 +17,5 @@ Analyzing Tweets and the cross section of stock returns
 nies. What is their subsequent performance?
 
 (h)* So far, we counted all tweets, regardless of their content (bullish vs. bearish). Find a(simple) way to incorporate content in the form of \bullish" and \bearish" tweets. (It is OK if a substantial number of tweets are neither bullish nor bearish). Form equally weighted portfolios and compare the subsequent returns.
+
 *Note: As this exercise can be computational quite challenging, you may limit the analysis to the largest companies that make up 80 to 90% of the S&P 500 index.
