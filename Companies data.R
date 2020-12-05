@@ -13,11 +13,15 @@ mydsws <- dsws$new()
 tickers <- mydsws$listRequest("LS&PCOMP", datatype = "MNEM", requestDate = "0D")
 tickers <- na.omit(ticker)
 
-export(tickers, "tickers.csv")
+export(tickers, "mnem.csv")
 
 tickers2 <- gsub("@", "", tickers[,2])
 tickers2 <- gsub("U:", "", tickers2)
 tickers2
+
+tic <- as.data.frame(tickers2)
+
+export(tic, "tickers.csv")
 
 try2 <- matrix(,nrow = 1 ,ncol = length(tickers[,2]))
 
