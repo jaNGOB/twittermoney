@@ -14,7 +14,7 @@ for ticker in tickers:
   
 
 for tag in tqdm(cashtags):
-    save = '{}_tweets.csv'.format(tag[1:])
-    with open(save,'a') as fd:
+    save = '{}_tweets.txt'.format(tag[1:])
+    with open(save, 'w') as fd:
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper(tag + ' since:' +  '2020-01-01' + ' until:' + '2020-12-01').get_items()):
-            fd.write(str(tweet))
+            fd.write(str(tweet) + '\n')
