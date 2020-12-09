@@ -2,22 +2,26 @@ import pandas as pd
 from tqdm import tqdm
 import tweepy
 
-def fetch_tw(ids, name):
+def fetch_tw(ids, name, first):
     list_of_tw_status = api.statuses_lookup(ids, tweet_mode= "extended")
     empty_data = pd.DataFrame()
     for status in list_of_tw_status:
         tweet_elem = {"tweet_id": int(status.id),
                     "screen_name": status.user.screen_name,
-                    "verified": status.user.verified,
-                    "followers": status.user.followers_count,
-                    "following": status.user.friends_count,
-                    "retweet": status.retweeted,
-                    "amount_retweet": status.retweet_count,
-                    "amount_favorite": status.favorite_count,
+                    "verified": int(status.user.verified),
+                    "followers": int(status.user.followers_count),
+                    "following": int(status.user.friends_count),
+                    "retweet": int(status.retweeted),
+                    "amount_retweet": int(status.retweet_count),
+                    "amount_favorite": int(status.favorite_count),
                     "tweet":status.full_text,
                     "date":status.created_at}
         empty_data = empty_data.append(tweet_elem, ignore_index = True)
-    empty_data.to_csv(name, mode="a")
+
+    if first:
+        empty_data.to_csv(name, mode="a")
+    else:
+        empty_data.to_csv(name, mode="a", header=False)
 
 
 consumer_key = "RxEdqHZMSd6LYzhxADq9CQINU"
@@ -50,7 +54,9 @@ for tag in tqdm(cashtags[:20]):
 
     total_count = len(ids)
     chunks = (total_count - 1) // 50 + 1
+    first = True
 
     for i in range(chunks):
-            batch = ids[i*50:(i+1)*50]
-            result = fetch_tw(batch, name)
+        batch = ids[i*50:(i+1)*50]
+        result = fetch_tw(batch, name, first)
+        first = False
