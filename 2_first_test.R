@@ -2,6 +2,38 @@ library(tidyquant)
 library(dplyr)
 library(data.table)
 
+#all_tickers <- read.csv('C:/Users/jango/code/research_env/USI/tickers_80.csv')
+
+tweets_ABMD <- read.csv('C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/new_new/ABMD_tweets_full.csv', header = TRUE) 
+
+
+all_tickers <- c('ABT', 'ADBE', 'ADI', 'AEP')
+
+tweets_ABMD <- read.csv('C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/ABMD_tweets_full.csv', header = TRUE) 
+
+tweets$date <- (as.Date(tweets$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone()))
+
+dates <- na.omit(tweets_ABMD %>% count(date))
+
+df <- xts(as.numeric(dates$n), order.by = as.Date(dates$date))
+colnames(df) <- 'ABMD'
+
+for (n in 1:length(all_tickers)){
+  #name <- substring(all_tickers[n], 3)
+  name <- all_tickers[n]
+  import_file <- paste("C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/",name,"_tweets_full.csv", sep = "")
+  temp_df <- read.csv(import_file, header = TRUE)
+  temp_df$date <- (as.Date(temp_df$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone()))
+  temp_date <- na.omit(temp_df %>% count(date))
+  
+  temp_xts <- xts(as.numeric(temp_date$n), order.by = as.Date(temp_date$date))
+  colnames(temp_xts) <- name
+  
+  df <- cbind(df, temp_xts[,1])
+  
+}
+
+
 getSymbols("ABMD", from = '2020-01-01', to = "2020-12-01",warnings = FALSE, auto.assign = TRUE)
 
 tweets_ABMD <- read.csv('C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/ABMD_tweets_full.csv', header = TRUE) 

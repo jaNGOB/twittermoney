@@ -14,7 +14,7 @@ def fetch_tw(ids, name, first):
                     "retweet": int(status.retweeted),
                     "amount_retweet": int(status.retweet_count),
                     "amount_favorite": int(status.favorite_count),
-                    "tweet":status.full_text,
+                    "tweet":str(status.full_text.replace('\r', '')),
                     "date":status.created_at}
         empty_data = empty_data.append(tweet_elem, ignore_index = True)
 
@@ -33,16 +33,14 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,wait_on_rate_limit=True)
 
-tickers = pd.read_csv('tickers_80.csv').columns[:20]
+tickers = pd.read_csv('tickers_final.csv').columns[100:150]
 
 cashtags = []
 for ticker in tickers:
-    if ticker[0] == '@':
+    if ticker[0] == '$':
         cashtags.append(ticker[1:])
-    elif ticker[1] == ':':
-        cashtags.append(ticker[2:])
 
-for tag in tqdm(cashtags[:20]):
+for tag in tqdm(cashtags):
     name = "{}_tweets_full.csv".format(tag)
     read_name = "{}_tweets.txt".format(tag)
 
