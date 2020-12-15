@@ -1,6 +1,8 @@
 # twittermoney - 10/10
 Analyzing Tweets and the cross section of stock returns
 
+- download first half of twitter data https://we.tl/t-RQum7553ep
+
 (a) Register with twitter and obtain an account.
 
 (b) Read the article Analyzing Twitter with R at https://towardsdatascience.com/setting-up-twitter-for-text-mining-in-r-bcfc5ba910f4 and run the code. (You need to add your own Twitter credentials and obtain an API key.) 
