@@ -2,6 +2,7 @@ library(tidyquant)
 library(dplyr)
 library(data.table)
 library(stringr)
+library(dygraphs)
 
 all_tickers <- read.csv('C:/Users/jango/code/research_env/USI/tickers_final.csv')
 
@@ -43,4 +44,10 @@ quarterly <- aggregate(df, as.yearqtr, mean)
 
 sum_ <- rowSums(quarterly)
 
-weights <- round(quarterly/rowSums(quarterly), 4)
+weights <- xts(round(quarterly/rowSums(quarterly), 4))
+
+p <- dygraph(weights)
+
+write.zoo(weights,file="C:/Users/jango/code/research_env/USI/test.csv", row.names=FALSE,col.names=TRUE,sep=",")
+
+read.csv('C:/Users/jango/code/research_env/USI/test.csv', row.names = 'Index')
