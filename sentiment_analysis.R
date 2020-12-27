@@ -15,12 +15,12 @@ all_tickers <- read.csv('C:/Users/jango/code/research_env/USI/tickers_final.csv'
 all_tickers <- colnames(all_tickers[2:length(all_tickers)])
 
 # Create a beginning dataframe with AMZN as it is the first ticker on the list.
-tweets_AMZN <- read.csv('C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/Tweets/AMZN_tweets_full.csv', header = TRUE) 
+tweets_AMZN <- read.csv('C:/Users/jango/code/research_env/USI/tweets/Actual_Tweets/AMZN_tweets_full.csv', header = TRUE) 
 tweets_AMZN$date <- (as.Date(tweets_AMZN$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone()))
 tweets_AMZN <- tweets_AMZN %>% mutate(tag = ifelse(str_detect(tweets_AMZN$tweet, fixed('$AMZN',  ignore_case=TRUE)), TRUE, FALSE))
 tweets_AMZN <- tweets_AMZN[tweets_AMZN$tag == TRUE,]
 tweets_AMZN['sentiment'] <- NA
-for (i in 1:length(tweets_AMZN)){
+for (i in 1:length(tweets_AMZN$tweet)){
   tweets_AMZN$sentiment[i] <- sentiment_by(tweets_AMZN$tweet[i])$ave_sentiment
 }
 
