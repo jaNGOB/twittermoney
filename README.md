@@ -34,3 +34,8 @@ Analyzing Tweets and the cross section of stock returns
 3. Relevant dataframes are now created such as count_df and sentiment_df.
 
 4. Backtests and analyses upon the data.
+
+## Step one, data collection. 
+To complete this project there is a need for a large data set of tweets. We choose to analyze 80% of the firms in the S&P500 based on market capitalization. We referenced these companies based on their cashtags, e.g. $AAPL.
+First, the amount of tweets that we could obtain officially from Twitter, as the API limited us to seven days of tweets. As seven days would not be diverse enough for a reliable data set we chose an alternative way to collect the data. The aim was to recover all the tweets for the designated companies for the past year, 2020. 
+
