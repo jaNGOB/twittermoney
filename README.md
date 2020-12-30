@@ -1,6 +1,9 @@
 # twittermoney
+A project of 4 Università della Svizzera italiana students to try and gain an advantage on the stock markets using twitter-data. 
 
-## Mission-Statement
+Let's try and make that Twittermoney. 
+
+## Mission statement
 Analyzing Tweets and the cross section of stock returns
 
 - download first half of twitter data https://we.tl/t-RQum7553ep
