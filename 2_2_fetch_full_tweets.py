@@ -51,7 +51,7 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth,wait_on_rate_limit=True)
 
-tickers = pd.read_csv('tickers.csv')
+tickers = pd.read_csv('Data/tickers.csv')
 
 # Create a new list without the "Cashtags" off twitter
 cashtags = []
@@ -62,8 +62,8 @@ for ticker in tickers:
 # Loop through all cash tags, read the tweet-ids and save the information in batches to avoid
 # getting rate limited.
 for tag in tqdm(cashtags):
-    name = "{}_tweets_full.csv".format(tag)
-    read_name = "{}_tweets.txt".format(tag)
+    name = "Data/{}_tweets_full.csv".format(tag)
+    read_name = "Data/{}_tweets.txt".format(tag)
 
     tweet_url = pd.read_csv(read_name, index_col= None, header = None, names = ["links"])
 
@@ -77,5 +77,5 @@ for tag in tqdm(cashtags):
 
     for i in range(chunks):
         batch = ids[i*50:(i+1)*50]
-        result = fetch_tw(batch, name, first)
+        fetch_tw(batch, name, first)
         first = False
