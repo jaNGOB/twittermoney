@@ -62,7 +62,7 @@ IndicesReturn <- merge(MarketIndexReturn, TwitterIndexReturn)
 colnames(IndicesReturn) <- c("Market Index", "Twitter Index")
 charts.PerformanceSummary(IndicesReturn)
 
-IndicesNormReturn <- merge((100+cumsum(MarketIndexReturn)), (100+ cumsum(TwitterIndexReturn)))
+IndicesNormReturn <- merge(100*(1+cumsum(MarketIndexReturn)), 100*(1+ cumsum(TwitterIndexReturn)))
 colnames(IndicesNormReturn) <- c("Market Index", "Twitter Index")
 
 dygraph(IndicesNormReturn)  %>%
@@ -134,7 +134,7 @@ dygraph(EqualIndex)  %>%
   dyOptions(fillGraph = TRUE) %>%
   dyRangeSelector(height = 40)
 
-EqualIndexNormReturn <- merge((100+cumsum(EqualIndexOverReturn)), (100+cumsum(EqualIndexUnderReturn))) 
+EqualIndexNormReturn <- merge(100*(1+cumsum(EqualIndexOverReturn)), 100*(1+cumsum(EqualIndexUnderReturn))) 
 colnames(EqualIndexNormReturn) <- c("Over", "Under")
 
 dygraph(EqualIndexNormReturn)  %>%
