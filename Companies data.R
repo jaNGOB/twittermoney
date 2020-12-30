@@ -1,6 +1,3 @@
-require("devtools")
-install_github("CharlesCara/DatastreamDSWS2R")
-githubinstall("CharlesCara/DatastreamDSWS2R")
 options(Datastream.Username = "ZUSI007")
 options(Datastream.Password = "OCEAN248")
 require("DatastreamDSWS2R")
