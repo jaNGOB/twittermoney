@@ -74,7 +74,7 @@ dygraph(IndicesNormReturn)  %>%
   dyOptions(fillGraph = TRUE) %>%
   dyRangeSelector(height = 40)
 
-OverUnder <- matrix(NA, nrow = 4, ncol = 399)
+OverUnder <- matrix(NA, nrow = length(weights5[,1]), ncol = length(weights5[1,]))
 
 for(n in 1:length(weights5[1,])) {
   for(q in 1:length(weights5[,1])) {
