@@ -4,7 +4,6 @@ library(PerformanceAnalytics)
 library(quantmod)
 
 tweetsWeights <- read.csv("Data/quarterly_weights.csv")
-tick <- read.csv("Data/tickers.csv")
 weights <- read.csv("Data/market_weights.csv", row.names = "Index")
 price <- read.csv("Data/stock_prices.csv", row.names = "Index")
 
