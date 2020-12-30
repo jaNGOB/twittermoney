@@ -1,4 +1,4 @@
-# twittermoney - 10/10
+# twittermoney
 Analyzing Tweets and the cross section of stock returns
 
 - download first half of twitter data https://we.tl/t-RQum7553ep
