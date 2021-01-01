@@ -11,9 +11,8 @@ all_tickers <- read.csv('Data/tickers.csv')
 
 # loop through all tickers and look if there are any tweets saved that do not mention the "cashtag".
 # if so, drop them from the df and save the cleaned one.
-for (n in 1:length(all_tickers)){
-  name <- substring(colnames(all_tickers[n]), 3)
-  #name <- all_tickers[n]
+for (n in 1:length(row.names(all_tickers))){
+  name <- all_tickers[n,]
   print(name)
   cname <- paste('$', name, sep='')
   file_name <- paste("Data/",name,"_tweets_full.csv", sep = "")

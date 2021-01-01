@@ -23,7 +23,7 @@ df <- xts(as.numeric(dates$n), order.by = as.Date(dates$date))
 colnames(df) <- 'AMZN'
 
 # Overwrite all_tickers to a new list, containing all tickers without AMZN.
-all_tickers <- colnames(all_tickers[2:length(all_tickers)])
+all_tickers <- all_tickers[2:length(row.names(all_tickers)),]
 
 # Main loop which goes through all stocks chosen and adds a new column to "df" containing the number of tweets per day.
 loading <- 0
@@ -31,7 +31,7 @@ total <- length(all_tickers)
 for (n in 1:total){
   loading <- loading + 1
   print(c(loading, total))
-  name <- substring(all_tickers[n], 3)
+  name <- all_tickers[n,]
   cname <- paste('$', name, sep='')
   import_file <- paste("Data/",name,"_tweets_full.csv", sep = "")
   temp_df <- read.csv(import_file, header = TRUE)
@@ -52,7 +52,7 @@ quarterly <- aggregate(df, as.yearqtr, mean)
 sum_ <- rowSums(quarterly)
 weights <- xts(round(quarterly/rowSums(quarterly), 4))
 
-p <- dygraph(weights)
+#p <- dygraph(weights)
 
 # Save the two dataframes as a csv for future use.
 write.zoo(df,file="Data/daily_count.csv", row.names=FALSE,col.names=TRUE,sep=",")

@@ -21,10 +21,10 @@ tickers <- mydsws$listRequest("LS&PCOMP", datatype = "MNEM", requestDate = "0D")
 tickers <- na.omit(tickers)
 
 # Clean the tickers to only save their actual ticker without the additional information to where the stock is traded.
-tickers2 <- gsub("@", "", tickers[,2])
-tickers2 <- gsub("U:", "", tickers2)
+tickers_100 <- gsub("@", "", tickers[,2])
+tickers_100 <- gsub("U:", "", tickers_100)
 
-write.csv(as.data.frame(tickers2), "Data/tickers_100.csv")
+write.csv(as.data.frame(tickers_100), "Data/tickers_100.csv")
 
 # download the market value of the companies based on data of October 2020.
 mv <- matrix(NA,nrow = 1 ,ncol = length(tickers[,2]))
@@ -48,22 +48,32 @@ tickers_80 <- subset(mv, mv > thres)
 tickers_80  <- t(tickers_80)
 tickers_80  <- as.data.frame(tickers_80)
 
-write.csv(tickers_80, "tickers_80.csv")
+tickers_80_clean <- gsub("@", "", colnames(tickers_80))
+tickers_80_clean <- gsub("U:", "", tickers_80_clean)
+
+write.csv(tickers_80_clean, "Data/tickers_80.csv", row.names = F)
+
+# There was not twitter data on all of the stocks in the list, so those who have no data get discarded. 
+# Stocks who were not in the index at the beginning of the year were also dropped from the list.
+
+toDelete <- c(100, 105, 138, 330, 331)
+tickers_final <- tickers_80[-toDelete[-1]]
+tickers_final_clean <- tickers_80_clean[-toDelete[-1]]
+
+write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
 
 # creating the quartely weights of the new index with 80% of the companies
+mvy <- matrix(NA,nrow = 4 ,ncol = length(tickers_final))
+for( i in 1:(length(tickers_final))) {
 
-mvy <- matrix(NA,nrow = 4 ,ncol = length(tickers_80))
-
-for( i in 1:(length(tickers_80))) {
-
-  mvy[,i] <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_80[i]),
+  mvy[,i] <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_final[i]),
                                           datatype = "MV", startDate = "2020-01-01", endDate = "2020-11-30" , frequency = "Q")
   
 }
 
 mvy[is.na(mvy)] <- 0
 totalMV <- apply(mvy,1, sum)
-weights <- matrix(NA,nrow = length(tickers_80)  ,ncol = 4)
+weights <- matrix(NA,nrow = length(tickers_final)  ,ncol = 4)
 
 for(j in 1:4) {
     
@@ -72,30 +82,26 @@ for(j in 1:4) {
 }
 
 weights <- t(weights)
-colnames(weights) <- colnames(tickers_80)
+colnames(weights) <- tickers_final_clean
 weights <- xts(weights, order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
 
 # download the stock prices of the 80% of the market
-tryDays <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_80[1]),
+tryDays <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_final[1]),
                                         datatype = "P", startDate = "2020-01-01", endDate = "2020-11-30" , frequency = "D")
 
-price <- matrix(NA,nrow = length(tryDays$X.AMZN)  ,ncol = length(tickers_80))
+price <- matrix(NA,nrow = length(tryDays$X.AMZN)  ,ncol = length(tickers_final))
 
-for( k in 1:length(tickers_80)) {
+for( k in 1:length(tickers_final)) {
 
-  price[,k] <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_80[k]),
+  price[,k] <- mydsws$timeSeriesListRequest(instrument = colnames(tickers_final[k]),
                                            datatype = "P", startDate = "2020-01-01", endDate = "2020-11-30" , frequency = "D")
   
 }
 
-tickers80 <- gsub("@", "", colnames(tickers_80))
-tickers80 <- gsub("U:", "", tickers80)
-colnames(weights) <- tickers80
+write.zoo(weights, "Data/market_weights.csv", row.names = F, col.names = T, sep = ",")
 
-write.zoo(weights, "market_weights.csv", row.names = F, col.names = T, sep = ",")
-
-colnames(price) <- tickers80
+colnames(price) <- tickers_final_clean
 price <- xts(price, order.by = as.Date(index(tryDays)))
 price[is.na(price)] <- 0
 
-write.zoo(price, "stock_prices.csv",row.names = F, col.names = T, sep = ",")
+write.zoo(price, "Data/stock_prices.csv",row.names = F, col.names = T, sep = ",")
