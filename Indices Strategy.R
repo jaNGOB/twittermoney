@@ -202,6 +202,6 @@ dygraph(merge(topIndexReturn, IndicesNormReturn))  %>%
   dyRangeSelector(height = 40)
 
 rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
-table.AnnualizedReturns(merge(topIndex, Indices), Rf =.003624367/length(pct_returns$AMZN["2020"]))
+table.AnnualizedReturns(merge(topIndex, Indices), Rf =.003624367/length(pct_returns$AMZN["2020"]), geometric = F)
 
 charts.PerformanceSummary(merge(topIndex, Indices), geometric = F)
