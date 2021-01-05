@@ -16,7 +16,7 @@ all_tickers <- read.csv('Data/tickers.csv')
 
 # Initiallize the dataframe with one single stock (AMZN since it is the first one in the list).
 tweets_AMZN <- read.csv('Data/AMZN_tweets_full.csv', header = TRUE) 
-tweets_AMZN$date <- (as.Date(tweets_AMZN$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone()))
+tweets_AMZN$date <- (as.Date(tweets_AMZN$date,format="%Y-%m-%d",tz=Sys.timezone()))
 dates <- na.omit(tweets_AMZN %>% count(date))
 
 df <- xts(as.numeric(dates$n), order.by = as.Date(dates$date))
@@ -31,7 +31,7 @@ total <- length(all_tickers)
 for (n in 1:total){
   loading <- loading + 1
   print(c(loading, total))
-  name <- all_tickers[n,]
+  name <- all_tickers[n]
   cname <- paste('$', name, sep='')
   import_file <- paste("Data/",name,"_tweets_full.csv", sep = "")
   temp_df <- read.csv(import_file, header = TRUE)
@@ -48,11 +48,32 @@ for (n in 1:total){
 df[is.na(df)] <- 0
 
 # create quarterly aggregation of tweets and calculate the weight compared to all tweets.
-quarterly <- aggregate(df, as.yearqtr, mean)
-sum_ <- rowSums(quarterly)
-weights <- xts(round(quarterly/rowSums(quarterly), 4))
+QuarterlyWeight<- function(df) {
+  # Function to create a xts frame containing the time-series of a weighted 
+  #
+  # :input w: quarterly weights
+  # :output: xts 
+  fquarter <- xts(t(getWeights(df['2020-01-01'])), order.by = as.Date('2020-01-01'))
+  squarter <- xts(t(getWeights(df['2020-01-02/2020-02'])), order.by = as.Date('2020-03-01'))
+  tquarter <- xts(t(getWeights(df['2020-03/2020-05'])), order.by = as.Date('2020-06-01'))
+  lquarter <- xts(t(getWeights(df['2020-06/2020-08'])), order.by = as.Date('2020-09-01'))
+  
+  Index <- rbind.xts(fquarter,squarter,tquarter,lquarter)
+  
+  return(Index)
+}
 
-#p <- dygraph(weights)
+getWeights <- function(df){
+  # Function to get the weights of each element of a given dataframe.
+  #
+  # :input df: "count" dataframe
+  # :output: dataframe containing one row which signify the weight each asset (Colname) should get.
+  sum_all <- sum(df)
+  sum_row <- sapply(df, sum)
+  return(sum_row/sum_all)
+}
+
+weights <- QuarterlyWeight(df)
 
 # Save the two dataframes as a csv for future use.
 write.zoo(df,file="Data/daily_count.csv", row.names=FALSE,col.names=TRUE,sep=",")
