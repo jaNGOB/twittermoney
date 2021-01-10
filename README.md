@@ -27,15 +27,13 @@ Analyzing Tweets and the cross section of stock returns
 *Note: As this exercise can be computational quite challenging, you may limit the analysis to the largest companies that make up 80 to 90% of the S&P 500 index.
 
 ## Usage
-1. The data is not included in this reposotory. Users should run the code to download the tweet ids and after that, the tweet information itself using the files in the \Data folder. This code will run a while so users are encuraged to shorten the timeframe or put the code on a designated server and let it run. Step 1 until 3 can also be skipped, since the relevant .csv documents are provided.
+1. The data is not included in this reposotory. While the stock data can be downloaded running the file "1_Companies_data.R", the list of tickers should not be updated if there is no intend to redownload all twitter data. During the time of the project alone, 5 new companies have been admitted to the S&P500 which will lead to new weights and unknown companies in the twitter files. Therefore, step 1 until 3 can also be skipped since the relevant .csv documents for the creation of the Indices are provided.
 
-2. After the data is collected, it can be cleaned using the R file in the \Data folder.
+2. After the data is collected, it can be cleaned using the R file "2_3_clean_tweets.R".
 
-3. Relevant dataframes are now created such as count_df and sentiment_df.
-
-4. Backtests and analyses upon the data.
+3. Relevant dataframes are now created such as count_df, which creates a daily time-series of the number of times each company has been mentioned by their "Cashtag".
 
 ## Step one, data collection. 
-To complete this project there is a need for a large data set of tweets. We choose to analyze 80% of the firms in the S&P500 based on market capitalization. We referenced these companies based on their cashtags, e.g. $AAPL.
+To complete this project there is a need for a large dataset of tweets. We choose to analyze 80% of the firms in the S&P500 based on market capitalization. We referenced these companies based on their cashtags, e.g. $AAPL.
 First, the amount of tweets that we could obtain officially from Twitter, as the API limited us to seven days of tweets. As seven days would not be diverse enough for a reliable data set we chose an alternative way to collect the data. The aim was to recover all the tweets for the designated companies for the past year, 2020. 
 
