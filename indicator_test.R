@@ -79,9 +79,12 @@ MktMkt <- 100*(1+cumsum(MarketIndex))
 indi <- xts(combined_verified / combined_count, order.by = as.Date(index(df)))
 
 par(mfrow=c(2,1))
+chart.CumReturns
 chart.CumReturns(MarketIndex, geometric = F, wealth.index = T, plot.engine = 'ggplot2')
 plot(indi, type = 'l')
 
+
+ggarrange()
 #
 # Bullshit based on pointless tweets, again? Again!
 #

@@ -15,6 +15,7 @@ library(tidyquant)
 price <- read.csv("Data/stock_prices.csv", row.names = "Index")
 price <- xts(price, order.by = as.Date(row.names(price)))
 daily_sent <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
+daily_sent <- xts(daily_sent, order.by = as.Date(row.names(daily_sent)))
 
 # convert stock prices into daily returns.
 pct_returns <- price
@@ -27,10 +28,10 @@ pct_returns[is.infinite(pct_returns)] <- 0
 
 # Create two quarterly weihted portfolios of stocks having positive or negative sentiment on average.
 
-fquarter <- xts(t(sapply(df['2020-01-01'], mean)), order.by = as.Date('2020-01-01'))
-squarter <- xts(t(sapply(df['2020-01-02/2020-03'], mean)), order.by = as.Date('2020-04-02'))
-tquarter <- xts(t(sapply(df['2020-04/2020-06'], mean)), order.by = as.Date('2020-07-01'))
-lquarter <- xts(t(sapply(df['2020-07/2020-09'], mean)), order.by = as.Date('2020-10-01'))
+fquarter <- xts(t(sapply(daily_sent['2020-01-01'], mean)), order.by = as.Date('2020-01-01'))
+squarter <- xts(t(sapply(daily_sent['2020-01-02/2020-03'], mean)), order.by = as.Date('2020-04-02'))
+tquarter <- xts(t(sapply(daily_sent['2020-04/2020-06'], mean)), order.by = as.Date('2020-07-01'))
+lquarter <- xts(t(sapply(daily_sent['2020-07/2020-09'], mean)), order.by = as.Date('2020-10-01'))
 
 quarterly <- rbind.xts(fquarter,squarter,tquarter,lquarter)
 quarterly[is.na(quarterly)] <- 0
