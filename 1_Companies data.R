@@ -56,14 +56,14 @@ write.csv(tickers_80_clean, "Data/tickers_80.csv", row.names = F)
 # For some stocks, no twitter data was available, so those who have no data get discarded. 
 # Stocks who were not in the index at the beginning of the year were also dropped from the list.
 
-finfin <- read.csv('Data/tickers_final.csv', header = F)
-finfin <- substr(finfin, 2, 9)
+temp_tickers <- read.csv('Data/tickers_final.csv', header = F)
+temp_tickers <- substr(temp_tickers, 2, 9)
 
 toDelete <- c(0)
 for (n in 1:length(colnames(tickers_80))){
   name <- gsub('@', '', colnames(tickers_80[n]))
   name <- gsub('U:', '', name)
-  inornot <- name%in%finfin
+  inornot <- name%in%temp_tickers
   if (inornot == F){
     toDelete <- c(toDelete, n)
   } 
