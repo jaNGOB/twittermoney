@@ -5,6 +5,7 @@
 # Clean tweets by omitting those who dont actually mention the "cashtag" of the company.
 #
 library(stringr)
+library(dplyr)
 
 # import all tickers that are to be cleaned. 
 all_tickers <- read.csv('Data/tickers.csv')
@@ -16,12 +17,10 @@ for (n in 1:length(row.names(all_tickers))){
   print(name)
   cname <- paste('$', name, sep='')
   file_name <- paste("Data/",name,"_tweets_full.csv", sep = "")
-  temp_df <- read.csv(import_file, header = TRUE)
+  temp_df <- read.csv(file_name, header = TRUE)
   temp_df <- temp_df %>% mutate(tag = ifelse(str_detect(temp_df$tweet, fixed(cname,  ignore_case=TRUE)), TRUE, FALSE))
   temp_df <- temp_df[temp_df$tag == TRUE,]
   
   write.csv(as.data.frame(temp_df),file=file_name,row.names=F)
   
 }
-  
-  

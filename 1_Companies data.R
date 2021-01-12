@@ -53,14 +53,28 @@ tickers_80_clean <- gsub("U:", "", tickers_80_clean)
 
 write.csv(tickers_80_clean, "Data/tickers_80.csv", row.names = F)
 
-# There was not twitter data on all of the stocks in the list, so those who have no data get discarded. 
+# For some stocks, no twitter data was available, so those who have no data get discarded. 
 # Stocks who were not in the index at the beginning of the year were also dropped from the list.
 
-toDelete <- c(100, 105, 138, 330, 331)
-tickers_final <- tickers_80[-toDelete[-1]]
-tickers_final_clean <- tickers_80_clean[-toDelete[-1]]
+finfin <- read.csv('Data/tickers_final.csv', header = F)
+finfin <- substr(finfin, 2, 9)
 
-write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
+toDelete <- c(0)
+for (n in 1:length(colnames(tickers_80))){
+  name <- gsub('@', '', colnames(tickers_80[n]))
+  name <- gsub('U:', '', name)
+  inornot <- name%in%finfin
+  if (inornot == F){
+    toDelete <- c(toDelete, n)
+  } 
+}
+
+tickers_final <- tickers_80[-toDelete]
+tickers_final_clean <- tickers_80_clean[-toDelete]
+
+# write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
+
+tickers_final <- read.csv('Data/tickers.csv')
 
 # creating the quartely weights of the new index with 80% of the companies
 mvy <- matrix(NA,nrow = 4 ,ncol = length(tickers_final))

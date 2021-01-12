@@ -54,9 +54,9 @@ QuarterlyWeight<- function(df) {
   # :input w: quarterly weights
   # :output: xts 
   fquarter <- xts(t(getWeights(df['2020-01-01'])), order.by = as.Date('2020-01-01'))
-  squarter <- xts(t(getWeights(df['2020-01-02/2020-02'])), order.by = as.Date('2020-03-01'))
-  tquarter <- xts(t(getWeights(df['2020-03/2020-05'])), order.by = as.Date('2020-06-01'))
-  lquarter <- xts(t(getWeights(df['2020-06/2020-08'])), order.by = as.Date('2020-09-01'))
+  squarter <- xts(t(getWeights(df['2020-01-02/2020-03'])), order.by = as.Date('2020-04-02'))
+  tquarter <- xts(t(getWeights(df['2020-04/2020-06'])), order.by = as.Date('2020-07-01'))
+  lquarter <- xts(t(getWeights(df['2020-07/2020-09'])), order.by = as.Date('2020-10-01'))
   
   Index <- rbind.xts(fquarter,squarter,tquarter,lquarter)
   
