@@ -39,8 +39,6 @@ for (n in 1:length(colnames(price))){
 pct_returns[is.na(pct_returns)] <- 0
 pct_returns[is.infinite(pct_returns)] <- 0
 
-weights <- weights[, -to_delete[-1]]
-
 colnames(weights) == colnames(pct_returns)
 
 IndexCreation <- function(w) {
@@ -48,16 +46,15 @@ IndexCreation <- function(w) {
   #
   # :input w: quarterly weights
   # :output: xts 
-  Index1 <- xts(pct_returns["2020/2020-03-31"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-03-31"])))
-  Index2 <- xts(pct_returns["2020-04-01/2020-06-30"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-06-30"])))
-  Index3 <- xts(pct_returns["2020-07-01/2020-09-30"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-09-30"])))
+  Index1 <- xts(pct_returns["2020/2020-04-01"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-04-01"])))
+  Index2 <- xts(pct_returns["2020-04-01/2020-07-01"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-07-01"])))
+  Index3 <- xts(pct_returns["2020-07-01/2020-10-01"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-10-01"])))
   Index4 <- xts(pct_returns["2020-10-01/2020-11-30"] %*% t(w[4,]), order.by = as.Date(index(pct_returns["2020-10-01/2020-11-30"])))
   
   Index <- rbind.xts(Index1,Index2,Index3,Index4)
   
   return(Index)
 }
-
 
 # Create Market Index as well as a weighted Twitter index and plot both.
 MarketIndex <- IndexCreation(weights)
@@ -76,7 +73,6 @@ dygraph(IndicesNormReturn)  %>%
   dyShading(from = "2020-02-19", to = "2020-04-01", col = "#FFE6E6" ) %>%
   dyOptions(fillGraph = TRUE) %>%
   dyRangeSelector(height = 40)
-
 charts.PerformanceSummary(Indices)
 
 # Create equal weights for two portfolios for over-and undertweeted companies.
@@ -112,6 +108,10 @@ for(g in 1:length(weights[1,])) {
   }
  }
 }
+
+# Plot only SP500 
+
+
 
 EqualWeightsOverXts <- xts(EqualWeightsOver, order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
 EqualWeightsUnderXts <- xts(EqualWeightsUnder, order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))

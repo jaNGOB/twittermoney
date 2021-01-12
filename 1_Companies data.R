@@ -69,10 +69,10 @@ for (n in 1:length(colnames(tickers_80))){
   } 
 }
 
-tickers_final <- tickers_80[-toDelete]
-tickers_final_clean <- tickers_80_clean[-toDelete]
+tickers_final <- tickers_80[-toDelete[2:length(toDelete)]]
+tickers_final_clean <- tickers_80_clean[-toDelete[2:length(toDelete)]]
 
-# write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
+write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
 
 tickers_final <- read.csv('Data/tickers.csv')
 

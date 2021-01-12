@@ -80,3 +80,6 @@ write.zoo(df,file="Data/daily_count.csv", row.names=FALSE,col.names=TRUE,sep=","
 write.zoo(weights,file="Data/quarterly_weights.csv", row.names=FALSE,col.names=TRUE,sep=",")
 
 read.csv('Data/quarterly_weights.csv', row.names = 'Index')
+
+# 
+
