@@ -12,12 +12,13 @@ library(dplyr)
 library(stringr)
 library(tidyquant)
 
+# Import and convert data used to create a sentiment index.
 price <- read.csv("Data/stock_prices.csv", row.names = "Index")
 price <- xts(price, order.by = as.Date(row.names(price)))
 daily_sent <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
 daily_sent <- xts(daily_sent, order.by = as.Date(row.names(daily_sent)))
 
-# convert stock prices into daily returns.
+# convert stock prices into daily logarithmic returns.
 pct_returns <- price
 for (n in 1:length(colnames(price))){
   new <- dailyReturn(price[,n], type = "log")
@@ -26,7 +27,7 @@ for (n in 1:length(colnames(price))){
 pct_returns[is.na(pct_returns)] <- 0
 pct_returns[is.infinite(pct_returns)] <- 0
 
-# Create two quarterly weihted portfolios of stocks having positive or negative sentiment on average.
+# Create two quarterly weighted portfolios of stocks having positive or negative sentiment on average.
 
 fquarter <- xts(t(sapply(daily_sent['2020-01-01'], mean)), order.by = as.Date('2020-01-01'))
 squarter <- xts(t(sapply(daily_sent['2020-01-02/2020-03'], mean)), order.by = as.Date('2020-04-02'))
@@ -51,6 +52,8 @@ QuarterlyIndex<- function(w) {
   return(Index)
 }
 
+# Initiate an empty matrix which will be filled by "pos" if the average quarterly sentiment is positive
+# or "neg" if it is negative.
 quarterly_ <- matrix(NA, nrow = length(quarterly[,1]), ncol = length(quarterly[1,]))
 
 for(n in 1:length(quarterly[1,])) {
@@ -64,6 +67,8 @@ for(n in 1:length(quarterly[1,])) {
   }
 }
 
+# Initiate two empty matrices to fill them with equal weight compared to how many other stocks have a
+# positive/negative average sentiment in each quarter.
 negativeQrt <- matrix(NA, nrow = length(quarterly[,1]), ncol = length(quarterly[1,]))
 positiveQrt <- matrix(NA, nrow = length(quarterly[,1]), ncol = length(quarterly[1,]))
 
@@ -82,30 +87,30 @@ for(g in 1:length(quarterly[1,])) {
   }
 }
 
+# Replace the colnames so they are easily identifiable again and convert it to an xts.
 colnames(negativeQrt) <- colnames(quarterly)
 colnames(positiveQrt) <- colnames(quarterly)
 
 positiveQrt <- xts(positiveQrt, order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
 negativeQrt <- xts(negativeQrt, order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
 
+# Create quarterly indices using the function stated above called "QuarterlyIndex".
 posIndexQrt <- QuarterlyIndex(positiveQrt)
 negIndexQrt <- QuarterlyIndex(negativeQrt)
 
-EqualIndexNormReturn <- merge(100*(1+cumsum(posIndexQrt)), 100*(1+cumsum(negIndexQrt)))
-colnames(EqualIndexNormReturn) <- c("Positive Index", "Negative Index")
-
+# Download the data of the Symbol "IRX" to get the Riskfree for the creation of annualized returns / st-dev and sharpe.
 getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
 rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
 table.AnnualizedReturns(posIndexQrt, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
 table.AnnualizedReturns(negIndexQrt, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
 
+# Plot the two Indices just created.
 QuarterlyIndices <- merge(posIndexQrt, negIndexQrt)
 colnames(QuarterlyIndices) <- c('Positive Index', 'Negative Index')
-
 charts.PerformanceSummary(QuarterlyIndices, wealth.index = T, geometric = F, plot.engine = "ggplot2")
 
 
-# Create two weekly weihted portfolios of stocks having positive or negative sentiment on average.
+# Create two weekly weighted portfolios of stocks having positive or negative sentiment on average.
 weekly <- apply.weekly(daily_sent, mean)
 weekly_ <- matrix(NA, nrow = length(weekly[,1]), ncol = length(weekly[1,]))
 

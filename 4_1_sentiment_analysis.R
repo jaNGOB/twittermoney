@@ -58,8 +58,7 @@ for (n in 1:length(all_tickers)){
 
 df[is.na(df)] <- 0
 
-# qplot(tweets_AMZN$sentiment[tweets_AMZN$sentiment != 0], geom="histogram",binwidth=0.05,main="Amazon Twitter Sentiment Histogram")
-
+# Save the daily sentiment scores of all stocks to a csv document for further use.
 write.zoo(df,file="Data/daily_sentiment.csv", row.names=FALSE,col.names=TRUE,sep=",")
 
-test_df <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
+# test_df <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
