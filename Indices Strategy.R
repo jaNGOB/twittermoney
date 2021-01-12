@@ -50,6 +50,11 @@ IndexCreation <- function(w) {
 MarketIndex <- IndexCreation(weights)
 TwitterIndex <- IndexCreation(tweetsWeights)
 
+colnames(MarketIndex) <- "Modified S&P 500 "
+
+chart.CumReturns(MarketIndex, geometric = F, colorset = 1, main = "S&P 500 modified",
+                 plot.engine = "ggplot2", wealth.index = T )
+
 Indices <- merge(TwitterIndex, MarketIndex)
 colnames(Indices) <- c("Twitter Index", "Market Index")
 
@@ -65,9 +70,8 @@ dygraph(IndicesNormReturn)  %>%
   dyRangeSelector(height = 40)
 
 charts.PerformanceSummary(Indices, geometric = F, plot.engine = "plotly")
-colors <- c(rgb(29,161,242), rgb(220,20,60))
 
-charts.PerformanceSummary(Indices, wealth.index = T, geometric = F, plot.engine = "ggplot2", col = colors)
+charts.PerformanceSummary(Indices, wealth.index = T, geometric = F, plot.engine = "ggplot2")
 
 getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
 rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
