@@ -9,6 +9,7 @@ library(dygraphs)
 library(xts)
 library(PerformanceAnalytics)
 library(quantmod)
+library(ggplot2)
 
 # Import the data such as weights and stock prices.
 tweetsWeights <- read.csv("Data/quarterly_weights.csv")
@@ -19,17 +20,6 @@ weights <- xts(weights, order.by = as.Date(row.names(weights)))
 price <- xts(price, order.by = as.Date(row.names(price)))
 tweetsWeights <- xts(tweetsWeights[,-1], order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
 
-
-to_delete <- c(0)
-for (n in 1:length(colnames(price))){
-  inornot <- colnames(price)[n]%in%colnames(tweetsWeights)
-  if (inornot == F){
-    to_delete <- c(to_delete, n)
-  } 
-}
-
-price <- price[, -to_delete[-1]]
-
 # convert stock prices into daily returns.
 pct_returns <- price
 for (n in 1:length(colnames(price))){
@@ -38,8 +28,6 @@ for (n in 1:length(colnames(price))){
 }
 pct_returns[is.na(pct_returns)] <- 0
 pct_returns[is.infinite(pct_returns)] <- 0
-
-weights <- weights[, -to_delete[-1]]
 
 colnames(weights) == colnames(pct_returns)
 
@@ -73,10 +61,17 @@ dygraph(IndicesNormReturn)  %>%
   dySeries("Twitter Index", label = "Twitter Index") %>%
   dyLegend(width = 600) %>%
   dyShading(from = "2020-02-19", to = "2020-04-01", col = "#FFE6E6" ) %>%
-  dyOptions(fillGraph = TRUE) %>%
+  dyOptions(fillGraph = TRUE, colors = c('rgb(220,20,60)','rgb(29, 161, 242)')) %>%
   dyRangeSelector(height = 40)
 
-charts.PerformanceSummary(Indices, geometric = F)
+charts.PerformanceSummary(Indices, geometric = F, plot.engine = "plotly")
+colors <- c(rgb(29,161,242), rgb(220,20,60))
+
+charts.PerformanceSummary(Indices, wealth.index = T, geometric = F, plot.engine = "ggplot2", col = colors)
+
+getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
+rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
+table.AnnualizedReturns(Indices, geometric = F, Rf =rf/length(pct_returns$AMZN["2020"]))
 
 # Create equal weights for two portfolios for over-and undertweeted companies.
 OverUnder <- matrix(NA, nrow = length(weights[,1]), ncol = length(weights[1,]))
@@ -123,7 +118,10 @@ EqualIndexUnder <- IndexCreation(EqualWeightsUnderXts)
 
 EqualIndexReturn <- merge(EqualIndexOver, EqualIndexUnder)
 colnames(EqualIndexReturn) <- c("Over", "Under")
-charts.PerformanceSummary(EqualIndexReturn, geometric = F)
+charts.PerformanceSummary(EqualIndexReturn, geometric = F, plot.engine = "plotly")
+charts.PerformanceSummary(EqualIndexReturn, wealth.index = T, geometric = F, plot.engine = "ggplot2")
+
+table.AnnualizedReturns(EqualIndexReturn, geometric = F, Rf =rf/length(pct_returns$AMZN["2020"]))
 
 EqualIndexNormReturn <- merge(100*(1+cumsum(EqualIndexOver)), 100*(1+cumsum(EqualIndexUnder))) 
 colnames(EqualIndexNormReturn) <- c("Over", "Under")
@@ -165,8 +163,6 @@ topWeightsXts <- xts(topWeights, order.by = as.Date(c("2020-01-01", "2020-04-01"
 
 colnames(topWeightsXts) <- colnames(weights)
 
-getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
-
 IndexCreation2 <- function(w) {
   # Function to create a xts frame containing the time-series of a weighted 
   #
@@ -198,10 +194,12 @@ colnames(topIndexReturn) <- "Long Short Strategy"
 dygraph(merge(topIndexReturn, IndicesNormReturn))  %>%
   dyLegend(width = 600) %>%
   dyShading(from = "2020-02-19", to = "2020-04-01", col = "#FFE6E6" ) %>%
-  dyOptions(fillGraph = TRUE) %>%
+  dyOptions(fillGraph = TRUE, colors = c('rgb(46,139,87)','rgb(220,20,60)','rgb(29, 161, 242)')) %>%
   dyRangeSelector(height = 40)
 
-rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
 table.AnnualizedReturns(merge(topIndex, Indices), Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
 
-charts.PerformanceSummary(merge(topIndex, Indices), geometric = F)
+charts.PerformanceSummary(merge(topIndex, Indices), geometric = F, plot.engine = "plotly")
+charts.PerformanceSummary(merge(topIndex, Indices), wealth.index = T, geometric = F, plot.engine = "ggplot2")
+charts.PerformanceSummary(merge(topIndex, Indices[,2]), wealth.index = T, geometric = F, plot.engine = "ggplot2")
+
