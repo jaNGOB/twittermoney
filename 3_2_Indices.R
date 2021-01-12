@@ -33,7 +33,7 @@ price <- price[, -to_delete[-1]]
 # convert stock prices into daily returns.
 pct_returns <- price
 for (n in 1:length(colnames(price))){
-  new <- dailyReturn(price[,n], type = "arithmetic")
+  new <- dailyReturn(price[,n], type = "log")
   pct_returns[,n] <- new
 }
 pct_returns[is.na(pct_returns)] <- 0
@@ -46,9 +46,9 @@ IndexCreation <- function(w) {
   #
   # :input w: quarterly weights
   # :output: xts 
-  Index1 <- xts(pct_returns["2020/2020-04-01"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-04-01"])))
-  Index2 <- xts(pct_returns["2020-04-01/2020-07-01"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-07-01"])))
-  Index3 <- xts(pct_returns["2020-07-01/2020-10-01"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-10-01"])))
+  Index1 <- xts(pct_returns["2020/2020-03-31"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-03-31"])))
+  Index2 <- xts(pct_returns["2020-04-01/2020-06-30"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-06-30"])))
+  Index3 <- xts(pct_returns["2020-07-01/2020-09-30"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-09-30"])))
   Index4 <- xts(pct_returns["2020-10-01/2020-11-30"] %*% t(w[4,]), order.by = as.Date(index(pct_returns["2020-10-01/2020-11-30"])))
   
   Index <- rbind.xts(Index1,Index2,Index3,Index4)
@@ -74,6 +74,11 @@ dygraph(IndicesNormReturn)  %>%
   dyOptions(fillGraph = TRUE) %>%
   dyRangeSelector(height = 40)
 charts.PerformanceSummary(Indices)
+
+
+getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
+rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
+table.AnnualizedReturns(MarketIndex, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
 
 # Create equal weights for two portfolios for over-and undertweeted companies.
 OverUnder <- matrix(NA, nrow = length(weights[,1]), ncol = length(weights[1,]))
@@ -108,6 +113,7 @@ for(g in 1:length(weights[1,])) {
   }
  }
 }
+
 
 # Plot only SP500 
 
