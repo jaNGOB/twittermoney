@@ -13,11 +13,12 @@ library(tidyquant)
 
 # Import tickers and create a list of stocks that will be used.
 all_tickers <- read.csv('Data/tickers.csv')
-all_tickers <- colnames(all_tickers[2:length(all_tickers)])
+#all_tickers <- colnames(all_tickers[2:length(all_tickers)])
+all_tickers <- all_tickers[2:length(row.names(all_tickers)),]
 
 # Create a beginning dataframe with AMZN as it is the first ticker on the list.
 tweets_AMZN <- read.csv('Data/AMZN_tweets_full.csv', header = TRUE) 
-tweets_AMZN$date <- as.Date(tweets_AMZN$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone())
+#tweets_AMZN$date <- as.Date(tweets_AMZN$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone())
 sentences <- get_sentences(tweets_AMZN$tweet)
 tweets_AMZN['sentiment'] <- sentiment_by(sentences)$ave_sentiment
 
@@ -37,7 +38,8 @@ for (n in 1:length(all_tickers)){
   loading <- loading + 1
   print(c(loading, total))
   
-  name <- substring(all_tickers[n], 3)
+  #name <- substring(all_tickers[n], 3)
+  name <- all_tickers[n]
   import_file <- paste("Data/",name,"_tweets_full.csv", sep = "")
   temp_df <- read.csv(import_file, header = TRUE)
   temp_df$date <- as.Date(temp_df$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone())
@@ -58,11 +60,6 @@ df[is.na(df)] <- 0
 
 # qplot(tweets_AMZN$sentiment[tweets_AMZN$sentiment != 0], geom="histogram",binwidth=0.05,main="Amazon Twitter Sentiment Histogram")
 
-write.zoo(xts(test_df, order.by = as.Date(rownames(test_df))),file="Data/daily_sentiment.csv", row.names=FALSE,col.names=TRUE,sep=",")
+write.zoo(df,file="Data/daily_sentiment.csv", row.names=FALSE,col.names=TRUE,sep=",")
 
 test_df <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
-
-row.names(test_df) <- dates$date
-test_df[is.na(test_df)] <- 0
-
-

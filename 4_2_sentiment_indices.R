@@ -7,6 +7,7 @@
 #
 library(sentimentr)
 library(ggplot2)
+library(PerformanceAnalytics)
 library(dplyr)
 library(stringr)
 library(tidyquant)
@@ -14,33 +15,24 @@ library(tidyquant)
 price <- read.csv("Data/stock_prices.csv", row.names = "Index")
 price <- xts(price, order.by = as.Date(row.names(price)))
 daily_sent <- read.csv('Data/daily_sentiment.csv', row.names = 'Index')
-daily_sent <- daily_sent[,-134]
-
-# Clean the xts for stocks that were added during the year and not included in the twitter data.
-to_delete <- c(0)
-for (n in 1:length(colnames(price))){
-  inornot <- colnames(price)[n]%in%colnames(daily_sent)
-  if (inornot == F){
-    to_delete <- c(to_delete, n)
-  }
-}
-
-price <- price[, -to_delete[-1]]
 
 # convert stock prices into daily returns.
 pct_returns <- price
 for (n in 1:length(colnames(price))){
-  new <- dailyReturn(price[,n], type = "arithmetic")
+  new <- dailyReturn(price[,n], type = "log")
   pct_returns[,n] <- new
 }
 pct_returns[is.na(pct_returns)] <- 0
 pct_returns[is.infinite(pct_returns)] <- 0
 
-
 # Create two quarterly weihted portfolios of stocks having positive or negative sentiment on average.
-quarterly <- aggregate(df, as.yearqtr, mean)
-quarterly <- xts(quarterly, order.by = as.Date(index(quarterly)))
-quarterly <- xts(quarterly[,-1], order.by = as.Date(c("2020-01-01", "2020-04-01", "2020-07-01", "2020-10-01")))
+
+fquarter <- xts(t(sapply(df['2020-01-01'], mean)), order.by = as.Date('2020-01-01'))
+squarter <- xts(t(sapply(df['2020-01-02/2020-03'], mean)), order.by = as.Date('2020-04-02'))
+tquarter <- xts(t(sapply(df['2020-04/2020-06'], mean)), order.by = as.Date('2020-07-01'))
+lquarter <- xts(t(sapply(df['2020-07/2020-09'], mean)), order.by = as.Date('2020-10-01'))
+
+quarterly <- rbind.xts(fquarter,squarter,tquarter,lquarter)
 quarterly[is.na(quarterly)] <- 0
 
 QuarterlyIndex<- function(w) {
@@ -48,9 +40,9 @@ QuarterlyIndex<- function(w) {
   #
   # :input w: quarterly weights
   # :output: xts 
-  Index1 <- xts(pct_returns["2020/2020-04-01"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-04-01"])))
-  Index2 <- xts(pct_returns["2020-04-01/2020-07-01"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-07-01"])))
-  Index3 <- xts(pct_returns["2020-07-01/2020-10-01"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-10-01"])))
+  Index1 <- xts(pct_returns["2020/2020-03-31"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-03-31"])))
+  Index2 <- xts(pct_returns["2020-04-01/2020-06-30"] %*% t(w[2,]), order.by = as.Date(index(pct_returns["2020-04-01/2020-06-30"])))
+  Index3 <- xts(pct_returns["2020-07-01/2020-09-30"] %*% t(w[3,]), order.by = as.Date(index(pct_returns["2020-07-01/2020-09-30"])))
   Index4 <- xts(pct_returns["2020-10-01/2020-11-30"] %*% t(w[4,]), order.by = as.Date(index(pct_returns["2020-10-01/2020-11-30"])))
   
   Index <- rbind.xts(Index1,Index2,Index3,Index4)
@@ -58,7 +50,7 @@ QuarterlyIndex<- function(w) {
   return(Index)
 }
 
-quarterly_ <- matrix(NA, nrow = length(weekly[,1]), ncol = length(weekly[1,]))
+quarterly_ <- matrix(NA, nrow = length(quarterly[,1]), ncol = length(quarterly[1,]))
 
 for(n in 1:length(quarterly[1,])) {
   for(q in 1:length(quarterly[,1])) {
@@ -99,8 +91,17 @@ posIndexQrt <- QuarterlyIndex(positiveQrt)
 negIndexQrt <- QuarterlyIndex(negativeQrt)
 
 EqualIndexNormReturn <- merge(100*(1+cumsum(posIndexQrt)), 100*(1+cumsum(negIndexQrt)))
+colnames(EqualIndexNormReturn) <- c("Positive Index", "Negative Index")
 
-plot(EqualIndexNormReturn)
+getSymbols("^IRX", from ="2019-12-31", to = "2020-11-30", src = "yahoo", auto.assign = T)
+rf <-mean(IRX$IRX.Adjusted['2020']/100, na.rm=T)
+table.AnnualizedReturns(posIndexQrt, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
+table.AnnualizedReturns(negIndexQrt, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
+
+QuarterlyIndices <- merge(posIndexQrt, negIndexQrt)
+colnames(QuarterlyIndices) <- c('Positive Index', 'Negative Index')
+
+charts.PerformanceSummary(QuarterlyIndices, wealth.index = T, geometric = F, plot.engine = "ggplot2")
 
 
 # Create two weekly weihted portfolios of stocks having positive or negative sentiment on average.
@@ -164,6 +165,9 @@ negative <- xts(negative, order.by = as.Date(row.names(negative)))
 
 posIndex <- WeeklyIndex(positive)
 negIndex <- WeeklyIndex(negative)
+
+table.AnnualizedReturns(posIndex, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
+table.AnnualizedReturns(negIndex, Rf =rf/length(pct_returns$AMZN["2020"]), geometric = F)
 
 EqualIndexNormReturn <- merge(100*(1+cumsum(posIndex)), 100*(1+cumsum(negIndex))) 
 colnames(EqualIndexNormReturn) <- c("Positive Index", "Negative Index")
