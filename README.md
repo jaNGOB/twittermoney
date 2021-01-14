@@ -6,7 +6,7 @@ Is it possible to predict stock market prices based on social media posts? Every
 ## Mission Objective
 Analyzing Tweets and the cross section of stock returns
 
-download first half of twitter data https://we.tl/t-RQum7553ep
+Download twitter data https://we.tl/t-OIP7s6i5Dm
 
 (a) Register with twitter and obtain an account.
 
