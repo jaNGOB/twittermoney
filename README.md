@@ -1,5 +1,5 @@
 # twittermoney
-A project of 4 Università della Svizzera italiana students to try and gain an advantage on the stock markets using twitter-data. 
+Is it possible to predict stock market prices based on social media posts? Every day we are surrounded by an abundance of news stories and opinions. Wouldn't it be amazing if we could analyze everything that is shared on a platform like Twitter and use it to predict stock prices?
 
 ## Mission statement
 Analyzing Tweets and the cross section of stock returns
@@ -25,9 +25,9 @@ Analyzing Tweets and the cross section of stock returns
 *Note: As this exercise can be computational quite challenging, you may limit the analysis to the largest companies that make up 80 to 90% of the S&P 500 index.
 
 ## Usage
-1. The data is not included in this reposotory. While the stock data can be downloaded running the file "1_Companies_data.R", the list of tickers should not be updated if there is no intend to redownload all twitter data. During the time of the project alone, 5 new companies have been admitted to the S&P500 which will lead to new weights and unknown companies in the twitter files. Therefore, step 1 until 3 can also be skipped since the relevant .csv documents for the creation of the Indices are provided.
+1. The data is not included in this reposotory. While the stock data can be downloaded running the file "1_Companies_data.R", the list of tickers should not be updated if there is no intend to redownload all twitter data. During the time of the project alone, 5 new companies have been admitted to the S&P500 which will lead to new weights and unknown companies in the twitter files. Therefore, step 1 until 3 can also be skipped since the relevant .csv documents for the creation of the Indices are provided. Furthermore, this project used data from datastream to collect the stockdata. We are not able to provide the access keys and these will have to be added to the "1_Companies_data.R". 
 
-2. After the data is collected using the files "2_1_fetch_twitter_ids.py" and "2_2_fetch_full_tweets.py", it can be cleaned using the R file "2_3_clean_tweets.R".
+2. After the data is collected using the files "2_1_fetch_twitter_ids.py" and "2_2_fetch_full_tweets.py", it can be cleaned using the R file "2_3_clean_tweets.R". Similar to the datastream API keys, we will not include our personal keys. Thus, to collect the Twitter data, you will have to obtain a personalized API key.
 
 3. Relevant dataframes are now created such as count_df using the file "3_1_creating_count_df.R", which creates a daily time-series of the number of times each company has been mentioned by their "Cashtag". This first step still requires twitter data which has to first be aquired using the two python documents. The creation of the twitter Index happens afterwards in file "3_2_Indices.R". 
 
