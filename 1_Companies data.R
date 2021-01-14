@@ -9,8 +9,8 @@
 
 # Provide user information to download data from Datastream. This can be replaced by yahoo/quantmod data downloader if 
 # Datastream is not available.
-options(Datastream.Username = "YOUR_USERNAME_HERE")
-options(Datastream.Password = "YOUR_PASSWORD_HERE")
+options(Datastream.Username = "ZUSI007")
+options(Datastream.Password = "OCEAN248")
 library("DatastreamDSWS2R")
 library("xts")
 
@@ -24,7 +24,7 @@ tickers <- na.omit(tickers)
 tickers_100 <- gsub("@", "", tickers[,2])
 tickers_100 <- gsub("U:", "", tickers_100)
 
-write.csv(as.data.frame(tickers_100), "Data/tickers_100.csv")
+# write.csv(as.data.frame(tickers_100), "Data/tickers_100.csv")
 
 # download the market value of the companies based on data of October 2020.
 mv <- matrix(NA,nrow = 1 ,ncol = length(tickers[,2]))
@@ -51,7 +51,7 @@ tickers_80  <- as.data.frame(tickers_80)
 tickers_80_clean <- gsub("@", "", colnames(tickers_80))
 tickers_80_clean <- gsub("U:", "", tickers_80_clean)
 
-write.csv(tickers_80_clean, "Data/tickers_80.csv", row.names = F)
+#write.csv(tickers_80_clean, "Data/tickers_80.csv", row.names = F)
 
 # For some stocks, no twitter data was available, so those who have no data get discarded. 
 # Stocks who were not in the index at the beginning of the year were also dropped from the list.
@@ -72,9 +72,8 @@ for (n in 1:length(colnames(tickers_80))){
 tickers_final <- tickers_80[-toDelete[2:length(toDelete)]]
 tickers_final_clean <- tickers_80_clean[-toDelete[2:length(toDelete)]]
 
-write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
-
-tickers_final <- read.csv('Data/tickers.csv')
+# write.csv(tickers_final_clean, "Data/tickers.csv", row.names = F)
+# tickers_final <- read.csv('Data/tickers.csv')
 
 # creating the quartely weights of the new index with 80% of the companies
 mvy <- matrix(NA,nrow = 4 ,ncol = length(tickers_final))
@@ -112,10 +111,10 @@ for( k in 1:length(tickers_final)) {
   
 }
 
-write.zoo(weights, "Data/market_weights.csv", row.names = F, col.names = T, sep = ",")
+# write.zoo(weights, "Data/market_weights.csv", row.names = F, col.names = T, sep = ",")
 
 colnames(price) <- tickers_final_clean
 price <- xts(price, order.by = as.Date(index(tryDays)))
 price[is.na(price)] <- 0
 
-write.zoo(price, "Data/stock_prices.csv",row.names = F, col.names = T, sep = ",")
+# write.zoo(price, "Data/stock_prices.csv",row.names = F, col.names = T, sep = ",")
