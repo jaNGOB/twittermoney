@@ -9,8 +9,8 @@
 
 # Provide user information to download data from Datastream. This can be replaced by yahoo/quantmod data downloader if 
 # Datastream is not available.
-options(Datastream.Username = "ZUSI007")
-options(Datastream.Password = "OCEAN248")
+options(Datastream.Username = "YOUR_USERNAME_HERE")
+options(Datastream.Password = "YOUR_PASSWORD_HERE")
 library("DatastreamDSWS2R")
 library("xts")
 
