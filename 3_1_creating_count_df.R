@@ -76,22 +76,25 @@ getWeights <- function(df){
 weights <- QuarterlyWeight(df)
 
 # Save the two dataframes as a csv for future use.
-write.zoo(df,file="Data/daily_count.csv", row.names=FALSE,col.names=TRUE,sep=",")
-write.zoo(weights,file="Data/quarterly_weights.csv", row.names=FALSE,col.names=TRUE,sep=",")
+# write.zoo(df,file="Data/daily_count.csv", row.names=FALSE,col.names=TRUE,sep=",")
+# write.zoo(weights,file="Data/quarterly_weights.csv", row.names=FALSE,col.names=TRUE,sep=",")
 
 # read.csv('Data/quarterly_weights.csv', row.names = 'Index')
 
 # Aggregate the number of tweets per weekday to see some cyclicality. From a line plot one can already spot, 
 # that there are less tweets on the weekend. This Barplot proves this first look.
-df['weekday'] <-weekdays(as.Date(row.names(df)))
+wd <- data.frame(weekdays(as.Date(index(df))), row.names = as.Date(index(df)))
 
-mon <- sum(sapply(subset(df, df$weekday == 'Montag')[,-length(colnames(df))], sum))
-tue <- sum(sapply(subset(df, df$weekday == 'Dienstag')[,-length(colnames(df))], sum))
-wed <- sum(sapply(subset(df, df$weekday == 'Mittwoch')[,-length(colnames(df))], sum))
-thu <- sum(sapply(subset(df, df$weekday == 'Donnerstag')[,-length(colnames(df))], sum))
-fri <- sum(sapply(subset(df, df$weekday == 'Freitag')[,-length(colnames(df))], sum))
-sat <- sum(sapply(subset(df, df$weekday == 'Samstag')[,-length(colnames(df))], sum))
-sun <- sum(sapply(subset(df, df$weekday == 'Sonntag')[,-length(colnames(df))], sum))
+wddf <- data.frame(df)
+wddf$weekday <- wd
+
+mon <- sum(sapply(subset(wddf, wddf$weekday == 'Montag')[,-length(colnames(wddf))], sum))
+tue <- sum(sapply(subset(wddf, wddf$weekday == 'Dienstag')[,-length(colnames(wddf))], sum))
+wed <- sum(sapply(subset(wddf, wddf$weekday == 'Mittwoch')[,-length(colnames(wddf))], sum))
+thu <- sum(sapply(subset(wddf, wddf$weekday == 'Donnerstag')[,-length(colnames(wddf))], sum))
+fri <- sum(sapply(subset(wddf, wddf$weekday == 'Freitag')[,-length(colnames(wddf))], sum))
+sat <- sum(sapply(subset(wddf, wddf$weekday == 'Samstag')[,-length(colnames(wddf))], sum))
+sun <- sum(sapply(subset(wddf, wddf$weekday == 'Sonntag')[,-length(colnames(wddf))], sum))
 
 weekdays <- cbind(mon, tue, wed, thu, fri, sat, sun)
 
