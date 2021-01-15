@@ -57,6 +57,7 @@ tickers_80_clean <- gsub("U:", "", tickers_80_clean)
 # Stocks who were not in the index at the beginning of the year were also dropped from the list.
 
 temp_tickers <- read.csv('Data/tickers_final.csv', header = F)
+temp_tickers <- sapply(temp_tickers, as.character)
 temp_tickers <- substr(temp_tickers, 2, 9)
 
 toDelete <- c(0)
