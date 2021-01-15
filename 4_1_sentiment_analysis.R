@@ -19,6 +19,7 @@ all_tickers <- all_tickers[2:length(row.names(all_tickers)),]
 # Create a beginning dataframe with AMZN as it is the first ticker on the list.
 tweets_AMZN <- read.csv('Data/AMZN_tweets_full.csv', header = TRUE) 
 #tweets_AMZN$date <- as.Date(tweets_AMZN$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone())
+tweets_AMZN$tweet <- sapply(tweets_AMZN$tweet, toString)
 sentences <- get_sentences(tweets_AMZN$tweet)
 tweets_AMZN['sentiment'] <- sentiment_by(sentences)$ave_sentiment
 
@@ -43,6 +44,7 @@ for (n in 1:length(all_tickers)){
   import_file <- paste("Data/",name,"_tweets_full.csv", sep = "")
   temp_df <- read.csv(import_file, header = TRUE)
   temp_df$date <- as.Date(temp_df$date,format="%Y-%m-%d %H:%M:%S",tz=Sys.timezone())
+  temp_df$tweet <- sapply(temp_df$tweet, toString)
   sentences <- get_sentences(temp_df$tweet)
   temp_df['sentiment'] <- sentiment_by(sentences)$ave_sentiment
   temp_df <- temp_df[temp_df$sentiment != 0,]
