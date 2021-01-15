@@ -9,8 +9,8 @@
 
 # Provide user information to download data from Datastream. This can be replaced by yahoo/quantmod data downloader if 
 # Datastream is not available.
-options(Datastream.Username = "ZUSI007")
-options(Datastream.Password = "OCEAN248")
+options(Datastream.Username = "YOUR USERNAME HERE")
+options(Datastream.Password = "YOUR PASSWORD HERE")
 library("DatastreamDSWS2R")
 library("xts")
 
@@ -57,7 +57,6 @@ tickers_80_clean <- gsub("U:", "", tickers_80_clean)
 # Stocks who were not in the index at the beginning of the year were also dropped from the list.
 
 temp_tickers <- read.csv('Data/tickers_final.csv', header = F)
-temp_tickers <- sapply(temp_tickers, as.character)
 temp_tickers <- substr(temp_tickers, 2, 9)
 
 toDelete <- c(0)
