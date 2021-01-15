@@ -43,6 +43,7 @@ counter <- function(df, name){
 
 tweets_AMZN <- read.csv('Data/AMZN_tweets_full.csv', header = TRUE) 
 tweets_AMZN$date <- as.Date(tweets_AMZN$date,format="%Y-%m-%d",tz=Sys.timezone())
+tweets_AMZN$tweet <- sapply(tweets_AMZN$tweet, toString)
 sentences <- get_sentences(tweets_AMZN$tweet)
 tweets_AMZN['sentiment'] <- sentiment_by(sentences)$ave_sentiment
 
