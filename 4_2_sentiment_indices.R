@@ -159,15 +159,15 @@ WeeklyIndex <- function(w) {
   index <- xts(pct_returns["2020/2020-01-06"] %*% t(w[1,]), order.by = as.Date(index(pct_returns["2020/2020-01-06"])))
   
   for (n in 2:length(index(w))){
-    date_range <- paste(row.names(weekly)[n-1], row.names(weekly)[n], sep = '/')
+    date_range <- paste(index(weekly)[n-1], index(weekly)[n], sep = '/')
     temp_index <- xts(pct_returns[date_range] %*% t(w[n,]), order.by = as.Date(index(pct_returns[date_range])))
     index <- rbind.xts(index, temp_index)
   }
   return(index)
 }
 
-positive <- xts(positive, order.by = as.Date(row.names(positive)))
-negative <- xts(negative, order.by = as.Date(row.names(negative)))
+positive <- xts(positive, order.by = as.Date(index(weekly)))
+negative <- xts(negative, order.by = as.Date(index(weekly)))
 
 posIndex <- WeeklyIndex(positive)
 negIndex <- WeeklyIndex(negative)
