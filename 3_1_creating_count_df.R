@@ -10,6 +10,7 @@ library(tidyquant)
 library(dplyr)
 library(data.table)
 library(stringr)
+library(lubridate)
 library(dygraphs)
 
 all_tickers <- read.csv('Data/tickers.csv')
@@ -83,18 +84,19 @@ weights <- QuarterlyWeight(df)
 
 # Aggregate the number of tweets per weekday to see some cyclicality. From a line plot one can already spot, 
 # that there are less tweets on the weekend. This Barplot proves this first look.
-wd <- data.frame(weekdays(as.Date(index(df))), row.names = as.Date(index(df)))
+wd <- data.frame(wday(as.Date(index(df))), row.names = as.Date(index(df)))
+colnames(wd) <- 'weekday'
 
 wddf <- data.frame(df)
 wddf$weekday <- wd
 
-mon <- sum(sapply(subset(wddf, wddf$weekday == 'Montag')[,-length(colnames(wddf))], sum))
-tue <- sum(sapply(subset(wddf, wddf$weekday == 'Dienstag')[,-length(colnames(wddf))], sum))
-wed <- sum(sapply(subset(wddf, wddf$weekday == 'Mittwoch')[,-length(colnames(wddf))], sum))
-thu <- sum(sapply(subset(wddf, wddf$weekday == 'Donnerstag')[,-length(colnames(wddf))], sum))
-fri <- sum(sapply(subset(wddf, wddf$weekday == 'Freitag')[,-length(colnames(wddf))], sum))
-sat <- sum(sapply(subset(wddf, wddf$weekday == 'Samstag')[,-length(colnames(wddf))], sum))
-sun <- sum(sapply(subset(wddf, wddf$weekday == 'Sonntag')[,-length(colnames(wddf))], sum))
+mon <- sum(sapply(subset(wddf, wddf$weekday == 2)[,-length(colnames(wddf))], sum))
+tue <- sum(sapply(subset(wddf, wddf$weekday == 3)[,-length(colnames(wddf))], sum))
+wed <- sum(sapply(subset(wddf, wddf$weekday == 4)[,-length(colnames(wddf))], sum))
+thu <- sum(sapply(subset(wddf, wddf$weekday == 5)[,-length(colnames(wddf))], sum))
+fri <- sum(sapply(subset(wddf, wddf$weekday == 6)[,-length(colnames(wddf))], sum))
+sat <- sum(sapply(subset(wddf, wddf$weekday == 7)[,-length(colnames(wddf))], sum))
+sun <- sum(sapply(subset(wddf, wddf$weekday == 1)[,-length(colnames(wddf))], sum))
 
 weekdays <- cbind(mon, tue, wed, thu, fri, sat, sun)
 
