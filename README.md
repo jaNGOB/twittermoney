@@ -3,8 +3,6 @@
  
 Is it possible to predict stock market prices based on social media posts? Every day we are surrounded by an abundance of news stories and opinions. Wouldn't it be amazing if we could analyze everything that is shared on a platform like Twitter and use it to predict stock prices?
 
-Download twitter data https://we.tl/t-OIP7s6i5Dm
-
 ## Mission Objective
 Analyzing Tweets and the cross section of stock returns
 
